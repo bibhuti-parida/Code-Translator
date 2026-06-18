@@ -1,7 +1,7 @@
 # Code-Translator
 
-#Frontend
+Frontend
 https://github.com/bibhuti-parida/Code-Translator---Frontend
 
-##Backend
+Backend
 https://github.com/bibhuti-parida/Code-Translator---Backend
