@@ -52,7 +52,7 @@ An AI-powered web application that helps developers **translate, analyze, optimi
 
 ### AI Integration
 
-* Google Gemini API
+* Groq API
 
 ---
 
@@ -81,7 +81,7 @@ JWT_SECRET=your_secret
 JWT_EXPIRES_IN=7d
 
 GOOGLE_CLIENT_ID=your_google_client_id
-GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
 ```
 
 ### 🔹 Frontend (`client/.env`)
@@ -168,7 +168,7 @@ npm run dev
 
 * Do NOT commit `.env` files
 * Keep API keys secure
-* Use a new Gemini API key if exposed
+* Use a new Groq API key if exposed
 
 ---
 
