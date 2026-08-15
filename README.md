@@ -2,8 +2,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://smart-code-translator.vercel.app)
 
-🌐 **Live Demo:** https://smart-code-translator.vercel.app  
-📦 **Backend API:** https://smart-code-translator.onrender.com
 
 ---
 
@@ -195,7 +193,7 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Karthik**
+**Bibhuti**
 
 ---
 
