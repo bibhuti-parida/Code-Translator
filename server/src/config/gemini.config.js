@@ -1,66 +1,61 @@
 import dotenv from "dotenv";
+import Groq from "groq-sdk";
+
 dotenv.config();
 
-import { GoogleGenAI } from "@google/genai";
+const apiKey = process.env.GROQ_API_KEY;
+const MODEL_NAME = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
-// 🔹 Read API key
-const apiKey = process.env.GEMINI_API_KEY;
+let groq = null;
 
-// 🔹 Safe init
-let ai = null;
-
-if (!apiKey || apiKey.trim() === "" || apiKey === "your_gemini_api_key") {
-  console.warn("⚠ Gemini AI is disabled (no valid API key)");
+if (!apiKey || apiKey.trim() === "" || apiKey === "your_groq_api_key") {
+  console.warn("Groq AI is disabled (no valid API key)");
 } else {
-  console.log("✅ Gemini initialized");
-  ai = new GoogleGenAI({ apiKey });
+  console.log("Groq AI initialized");
+  groq = new Groq({ apiKey });
 }
 
-const MODEL_NAME = "gemini-2.5-flash";
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// 🔹 Sleep helper
-const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
-
-// 🔹 Main generator
 const generateContent = async (prompt, retries = 2) => {
-  if (!ai) {
-    throw new Error("Gemini API not configured");
+  if (!groq) {
+    throw new Error("Groq API not configured");
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await groq.chat.completions.create({
       model: MODEL_NAME,
-      contents: prompt,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2,
     });
+    const text = response.choices?.[0]?.message?.content;
 
-    if (!response || !response.text) {
-      throw new Error("Empty response from Gemini");
+    if (!text) {
+      throw new Error("Empty response from Groq");
     }
 
-    return response.text;
+    return text;
   } catch (error) {
-    // 🔁 Retry if quota exceeded
     if (error?.status === 429 && retries > 0) {
-      console.warn(`⏳ Retry Gemini... (${retries})`);
+      console.warn(`Retrying Groq request (${retries} remaining)`);
       await sleep(2000);
       return generateContent(prompt, retries - 1);
     }
 
-    console.error("❌ Gemini FULL error:", error);
-    throw new Error("Failed to get response from Gemini AI");
+    console.error("Groq request error:", error.message);
+    throw new Error("Failed to get response from Groq AI");
   }
 };
 
-// 🔹 Safe wrapper (prevents crash)
 export const safeGenerateContent = async (prompt) => {
   try {
     return await generateContent(prompt);
   } catch (error) {
-    console.warn("⚠ Gemini fallback activated");
+    console.warn("Groq fallback activated");
 
     return JSON.stringify({
-      translatedCode: "// ⚠ Gemini unavailable. Try again later.",
-      explanation: "Gemini AI is currently unavailable.",
+      translatedCode: "// Groq is unavailable. Try again later.",
+      explanation: "Groq AI is currently unavailable.",
       optimizedCode: "// Unable to optimize due to API limit.",
       suggestions: "API limit reached. Retry later.",
       timeComplexity: "N/A",
@@ -69,5 +64,4 @@ export const safeGenerateContent = async (prompt) => {
   }
 };
 
-// 🔹 Export main
 export { generateContent };
